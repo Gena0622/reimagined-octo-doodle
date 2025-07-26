@@ -81,7 +81,7 @@
         <!-- 页面标题 -->
         <header class="text-center mb-8 fade-in">
             <h1 class="text-[clamp(1.8rem,5vw,2.8rem)] font-bold text-white text-shadow mb-2">
-                随机视频播放
+                华远昆仑赋精彩视频集锦
             </h1>
             <p class="text-gray-300 max-w-2xl mx-auto">
                 探索精选视频内容，点击切换按钮发现更多精彩，喜欢的内容可以直接下载
@@ -102,28 +102,18 @@
                 <video id="randomVideo" controls class="w-full aspect-video object-contain bg-black">
                     您的浏览器不支持视频播放
                 </video>
-                
-                <!-- 视频信息条 -->
-                <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 text-left">
-                    <h2 id="videoTitle" class="text-lg font-medium text-white">视频加载中...</h2>
-                    <p id="videoInfo" class="text-sm text-gray-300">准备播放新视频</p>
-                </div>
             </div>
         </div>
 
         <!-- 视频统计信息 -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 text-center">
-            <div class="bg-dark/60 backdrop-blur-sm rounded-lg p-4 border border-gray-700/30 scale-hover">
-                <p class="text-gray-400 text-sm mb-1">总视频数量</p>
-                <p id="totalVideos" class="text-2xl font-bold text-primary">0</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 text-center">
+            <div class="bg-dark/60 backdrop-blur-sm rounded-lg p-3 border border-gray-700/30 scale-hover">
+                <p class="text-gray-400 text-xs mb-1">当前视频ID</p>
+                <p id="currentVideoId" class="text-xl font-bold text-secondary">--</p>
             </div>
-            <div class="bg-dark/60 backdrop-blur-sm rounded-lg p-4 border border-gray-700/30 scale-hover">
-                <p class="text-gray-400 text-sm mb-1">当前视频ID</p>
-                <p id="currentVideoId" class="text-2xl font-bold text-secondary">--</p>
-            </div>
-            <div class="bg-dark/60 backdrop-blur-sm rounded-lg p-4 border border-gray-700/30 scale-hover">
-                <p class="text-gray-400 text-sm mb-1">切换次数</p>
-                <p id="switchCount" class="text-2xl font-bold text-purple-400">0</p>
+            <div class="bg-dark/60 backdrop-blur-sm rounded-lg p-3 border border-gray-700/30 scale-hover">
+                <p class="text-gray-400 text-xs mb-1">切换次数</p>
+                <p id="switchCount" class="text-xl font-bold text-purple-400">0</p>
             </div>
         </div>
 
@@ -149,17 +139,16 @@
         // 视频直链列表
         const videoLinks = [
             "https://vip.123pan.cn/1851031399/14966185",  // 01
-            "https://vip.123pan.cn/1851031399/14966187",  // 02
-            "https://vip.123pan.cn/1851031399/14966188",  // 03
-            "https://vip.123pan.cn/1851031399/14966189",  // 04
-            "https://vip.123pan.cn/1851031399/14966190",  // 05
-            "https://vip.123pan.cn/1851031399/14966191",  // 06
-            "https://vip.123pan.cn/1851031399/14966192",  // 07
+            "https://vip.123pan.cn/1851031399/14938859",  // 02
+            "https://vip.123pan.cn/1851031399/14938839",  // 03
+            "https://vip.123pan.cn/1851031399/14938837",  // 04
+            "https://vip.123pan.cn/1851031399/14938836",  // 05
+            "https://vip.123pan.cn/1851031399/14938835",  // 06
+            "https://vip.123pan.cn/1851031399/14938813",  // 07
             "https://vip.123pan.cn/1851031399/14966193",  // 08
             "https://vip.123pan.cn/1851031399/14966194",  // 09
             "https://vip.123pan.cn/1851031399/14966196",  // 10
             "https://vip.123pan.cn/1851031399/14966197",  // 11
-            "https://vip.123pan.cn/1851031399/14966198",  // 12
             "https://vip.123pan.cn/1851031399/14966199",  // 13
             "https://vip.123pan.cn/1851031399/14966200",  // 14
             "https://vip.123pan.cn/1851031399/14966201",  // 15
@@ -174,21 +163,15 @@
             "https://vip.123pan.cn/1851031399/14966211",  // 24
             "https://vip.123pan.cn/1851031399/14966212",  // 25
             "https://vip.123pan.cn/1851031399/14966213",  // 26
-            "https://vip.123pan.cn/1851031399/14966214",  // 27
             "https://vip.123pan.cn/1851031399/14966215",  // 28
             "https://vip.123pan.cn/1851031399/14966216",  // 29
             "https://vip.123pan.cn/1851031399/14966217",  // 30
             "https://vip.123pan.cn/1851031399/14966218",  // 31
             "https://vip.123pan.cn/1851031399/14966219",  // 32
-            "https://vip.123pan.cn/1851031399/14966220",  // 33
+            "https://vip.123pan.cn/1851031399/14922843",  // 33
             "https://vip.123pan.cn/1851031399/14966221",  // 34
             "https://vip.123pan.cn/1851031399/14966222",  // 35
-            "https://vip.123pan.cn/1851031399/14966223"  // 36   
-        ];
-
-        // 视频标题（可根据实际情况修改）
-        const videoTitles = [
-            "华远昆仑赋视频集锦"
+            "https://vip.123pan.cn/1851031399/14939032"  // 36   
         ];
 
         // 获取页面元素
@@ -196,30 +179,26 @@
         const downloadBtn = document.getElementById('downloadBtn');
         const changeBtn = document.getElementById('changeBtn');
         const loadingIndicator = document.getElementById('loadingIndicator');
-        const videoTitle = document.getElementById('videoTitle');
-        const videoInfo = document.getElementById('videoInfo');
-        const totalVideosEl = document.getElementById('totalVideos');
         const currentVideoIdEl = document.getElementById('currentVideoId');
         const switchCountEl = document.getElementById('switchCount');
 
         // 初始化统计数据
         let switchCount = 0;
-        totalVideosEl.textContent = videoLinks.length;
         switchCountEl.textContent = switchCount;
 
         // 随机选择视频的函数
         function loadRandomVideo() {
             // 显示加载状态
             loadingIndicator.style.display = 'flex';
-            videoTitle.textContent = '视频加载中...';
-            videoInfo.textContent = '请稍候，正在准备视频内容';
             
             // 随机选择视频
             const randomIndex = Math.floor(Math.random() * videoLinks.length);
             const selectedVideo = videoLinks[randomIndex];
             
             // 更新统计信息
-            currentVideoIdEl.textContent = (randomIndex + 1).toString().padStart(2, '0');
+            // 从注释中提取视频ID（如 // 01 提取为 01）
+            const videoId = videoLinks[randomIndex].match(/\/\/\s*(\d+)/)?.[1] || (randomIndex + 1).toString().padStart(2, '0');
+            currentVideoIdEl.textContent = videoId;
             switchCount++;
             switchCountEl.textContent = switchCount;
             
@@ -229,9 +208,6 @@
             // 加载视频
             videoElement.src = selectedVideo;
             videoElement.setAttribute('data-current-video', selectedVideo);
-            
-            // 更新视频标题
-            videoTitle.textContent = videoTitles[randomIndex] || `精选视频 ${randomIndex + 1}`;
         }
 
         // 视频加载完成事件
@@ -241,15 +217,11 @@
             // 显示视频并添加淡入效果
             videoElement.classList.remove('opacity-0');
             videoElement.classList.add('fade-in');
-            // 更新视频信息
-            videoInfo.textContent = `时长: 未知 | 分辨率: 自适应`;
         });
 
         // 视频加载错误处理
         videoElement.addEventListener('error', function() {
             loadingIndicator.style.display = 'none';
-            videoTitle.textContent = '视频加载失败';
-            videoInfo.textContent = '请尝试点击"换一个视频"按钮';
         });
 
         // 页面加载时先随机加载一个视频
@@ -284,3 +256,4 @@
     </script>
 </body>
 </html>
+    
