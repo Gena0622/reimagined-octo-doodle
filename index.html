@@ -105,13 +105,13 @@
             </div>
         </div>
 
-        <!-- 视频统计信息 -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 text-center">
-            <div class="bg-dark/60 backdrop-blur-sm rounded-lg p-3 border border-gray-700/30 scale-hover">
+        <!-- 视频统计信息 - 确保两个统计项并排展示 -->
+        <div class="flex flex-col sm:flex-row gap-4 mb-8 justify-center">
+            <div class="flex-1 max-w-xs bg-dark/60 backdrop-blur-sm rounded-lg p-3 border border-gray-700/30 scale-hover">
                 <p class="text-gray-400 text-xs mb-1">当前视频ID</p>
                 <p id="currentVideoId" class="text-xl font-bold text-secondary">--</p>
             </div>
-            <div class="bg-dark/60 backdrop-blur-sm rounded-lg p-3 border border-gray-700/30 scale-hover">
+            <div class="flex-1 max-w-xs bg-dark/60 backdrop-blur-sm rounded-lg p-3 border border-gray-700/30 scale-hover">
                 <p class="text-gray-400 text-xs mb-1">切换次数</p>
                 <p id="switchCount" class="text-xl font-bold text-purple-400">0</p>
             </div>
@@ -138,7 +138,6 @@
     <script>
         // 视频直链列表
         const videoLinks = [
-            "https://vip.123pan.cn/1851031399/14966185",  // 01
             "https://vip.123pan.cn/1851031399/14938859",  // 02
             "https://vip.123pan.cn/1851031399/14938839",  // 03
             "https://vip.123pan.cn/1851031399/14938837",  // 04
@@ -150,21 +149,13 @@
             "https://vip.123pan.cn/1851031399/14966196",  // 10
             "https://vip.123pan.cn/1851031399/14966197",  // 11
             "https://vip.123pan.cn/1851031399/14966199",  // 13
-            "https://vip.123pan.cn/1851031399/14966200",  // 14
             "https://vip.123pan.cn/1851031399/14966201",  // 15
             "https://vip.123pan.cn/1851031399/14966202",  // 16
-            "https://vip.123pan.cn/1851031399/14966203",  // 17
-            "https://vip.123pan.cn/1851031399/14966204",  // 18
-            "https://vip.123pan.cn/1851031399/14966205",  // 19
             "https://vip.123pan.cn/1851031399/14966206",  // 20
-            "https://vip.123pan.cn/1851031399/14966207",  // 21
             "https://vip.123pan.cn/1851031399/14966209",  // 22
-            "https://vip.123pan.cn/1851031399/14966210",  // 23
-            "https://vip.123pan.cn/1851031399/14966211",  // 24
             "https://vip.123pan.cn/1851031399/14966212",  // 25
             "https://vip.123pan.cn/1851031399/14966213",  // 26
             "https://vip.123pan.cn/1851031399/14966215",  // 28
-            "https://vip.123pan.cn/1851031399/14966216",  // 29
             "https://vip.123pan.cn/1851031399/14966217",  // 30
             "https://vip.123pan.cn/1851031399/14966218",  // 31
             "https://vip.123pan.cn/1851031399/14966219",  // 32
@@ -173,6 +164,11 @@
             "https://vip.123pan.cn/1851031399/14966222",  // 35
             "https://vip.123pan.cn/1851031399/14939032"  // 36   
         ];
+
+        // 存储剩余未播放的视频索引（仅用于内部逻辑，不显示）
+        let remainingVideos = [];
+        // 当前播放的视频索引
+        let currentVideoIndex = -1;
 
         // 获取页面元素
         const videoElement = document.getElementById('randomVideo');
@@ -186,18 +182,41 @@
         let switchCount = 0;
         switchCountEl.textContent = switchCount;
 
-        // 随机选择视频的函数
-        function loadRandomVideo() {
+        // 初始化剩余视频列表
+        function initializeRemainingVideos() {
+            // 创建视频索引数组并打乱顺序
+            remainingVideos = Array.from({length: videoLinks.length}, (_, i) => i);
+            shuffleArray(remainingVideos);
+        }
+
+        // 随机打乱数组顺序的函数
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        // 加载下一个不重复的视频
+        function loadNextVideo() {
             // 显示加载状态
             loadingIndicator.style.display = 'flex';
             
-            // 随机选择视频
-            const randomIndex = Math.floor(Math.random() * videoLinks.length);
-            const selectedVideo = videoLinks[randomIndex];
+            // 如果剩余视频列表为空，重新初始化
+            if (remainingVideos.length === 0) {
+                initializeRemainingVideos();
+            }
+            
+            // 从剩余视频中选择第一个
+            currentVideoIndex = remainingVideos[0];
+            // 从剩余列表中移除当前视频
+            remainingVideos.shift();
+            
+            const selectedVideo = videoLinks[currentVideoIndex];
             
             // 更新统计信息
             // 从注释中提取视频ID（如 // 01 提取为 01）
-            const videoId = videoLinks[randomIndex].match(/\/\/\s*(\d+)/)?.[1] || (randomIndex + 1).toString().padStart(2, '0');
+            const videoId = videoLinks[currentVideoIndex].match(/\/\/\s*(\d+)/)?.[1] || (currentVideoIndex + 1).toString().padStart(2, '0');
             currentVideoIdEl.textContent = videoId;
             switchCount++;
             switchCountEl.textContent = switchCount;
@@ -224,8 +243,11 @@
             loadingIndicator.style.display = 'none';
         });
 
-        // 页面加载时先随机加载一个视频
-        window.onload = loadRandomVideo;
+        // 页面加载时初始化并加载第一个视频
+        window.onload = function() {
+            initializeRemainingVideos();
+            loadNextVideo();
+        };
 
         // 下载按钮点击事件
         downloadBtn.onclick = function() {
@@ -251,7 +273,7 @@
             this.classList.add('scale-95');
             setTimeout(() => this.classList.remove('scale-95'), 200);
             
-            loadRandomVideo();
+            loadNextVideo();
         };
     </script>
 </body>
